@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PersonaPulse - 100% Free AI, Photos & Emojis</title>
+  <title>PersonaPulse - Free AI, Photos & Emojis</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
@@ -35,7 +35,7 @@
       </div>
       <input id="groqApiKey" type="password" placeholder="gsk_xxxxxxxxxxxxxxxx..." 
         class="w-full px-3 py-2 bg-slate-900/90 border border-purple-700/60 rounded-xl focus:ring-2 focus:ring-purple-400 focus:outline-none text-white text-xs font-mono mb-2" />
-      <p class="text-[11px] text-emerald-400 font-medium">✓ No credit card • Lifetime free • Lightning fast</p>
+      <p class="text-[11px] text-emerald-400 font-medium">✓ No credit card • Lifetime free • Model: llama-3.1-8b-instant</p>
     </div>
 
     <!-- Photo Upload Section -->
@@ -363,7 +363,7 @@ Example: If user asks "Apni selfie bhejo 😍", you say:
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
-            model: "llama-3.3-70b-versatile",
+            model: "llama-3.1-8b-instant",
             messages: chatHistory,
             temperature: 0.85
           })
