@@ -1,686 +1,391 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PersonaPulse - Unrestricted AI Character Studio</title>
-  <!-- Tailwind CSS CDN -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PersonaPulse - Unrestricted AI & Image Generation</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Plus Jakarta Sans -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            mono: ['"JetBrains Mono"', 'monospace'],
-          },
-          colors: {
-            obsidian: {
-              950: '#07090e',
-              900: '#0b0f19',
-              850: '#0f1422',
-              800: '#141a2b',
-              700: '#1e263d',
-            },
-            violetPulse: {
-              400: '#a78bfa',
-              500: '#8b5cf6',
-              600: '#7c3aed',
-              700: '#6d28d9',
-            },
-            cyberPink: '#ec4899',
-          }
-        }
-      }
-    }
-  </script>
-
   <style>
-    /* Custom sleek scrollbar */
-    ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-    ::-webkit-scrollbar-track {
-      background: rgba(11, 15, 25, 0.7);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(139, 92, 246, 0.35);
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(139, 92, 246, 0.7);
-    }
-    .glass-card {
-      background: rgba(15, 20, 34, 0.78);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(139, 92, 246, 0.18);
-    }
-    .glow-violet {
-      box-shadow: 0 0 35px -8px rgba(124, 58, 237, 0.35);
-    }
-    .glow-bubble-user {
-      box-shadow: 0 4px 20px -3px rgba(124, 58, 237, 0.35);
-    }
+    .custom-scroll::-webkit-scrollbar { width: 5px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
   </style>
 </head>
-<body class="bg-obsidian-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-violetPulse-600 selection:text-white">
+<body class="bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 min-h-screen text-slate-100 flex items-center justify-center p-3 sm:p-6 font-sans">
 
-  <!-- Top Navigation Bar -->
-  <header class="w-full border-b border-obsidian-700/60 bg-obsidian-900/90 backdrop-blur-md sticky top-0 z-40 px-4 py-3">
-    <div class="max-w-6xl mx-auto flex items-center justify-between">
-      <div class="flex items-center space-x-3 cursor-pointer" onclick="goToCreator()">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-violetPulse-600 via-indigo-600 to-pink-500 flex items-center justify-center shadow-lg shadow-violetPulse-600/30 text-white font-extrabold text-lg">
-          ⚡
+  <!-- ================= CREATOR SCREEN ================= -->
+  <div id="creatorView" class="w-full max-w-xl bg-slate-900/95 backdrop-blur-md border border-slate-700/80 rounded-3xl p-6 sm:p-8 shadow-2xl transition-all">
+    
+    <div class="text-center mb-6">
+      <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-300 to-indigo-400">
+        🎭 PersonaPulse Studio
+      </h1>
+      <p class="text-slate-400 text-xs mt-1">Unrestricted Roleplay • Auto Photo Generator • Pure Freedom</p>
+    </div>
+
+    <!-- OpenRouter API Key & Model Configuration -->
+    <div class="mb-5 p-4 bg-purple-950/40 border border-purple-500/40 rounded-2xl">
+      <div class="flex items-center justify-between mb-1.5">
+        <label class="text-xs font-bold uppercase tracking-wider text-purple-300 flex items-center gap-1.5">
+          <i class="fa-solid fa-key text-pink-400"></i> OpenRouter API Key *
+        </label>
+        <a href="https://openrouter.ai/keys" target="_blank" class="text-[11px] text-pink-300 hover:underline">
+          Get Key <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+        </a>
+      </div>
+      <input id="openRouterApiKey" type="password" placeholder="sk-or-v1-xxxxxxxx..." 
+        class="w-full px-3 py-2 bg-slate-900/90 border border-purple-700/60 rounded-xl focus:ring-2 focus:ring-purple-400 focus:outline-none text-white text-xs font-mono mb-2.5" />
+      
+      <label class="text-[11px] font-semibold text-slate-300 block mb-1">Select Roleplay Model:</label>
+      <select id="selectedModel" class="w-full px-3 py-2 bg-slate-900 border border-purple-700/60 rounded-xl text-xs text-white focus:outline-none">
+        <option value="gryphe/mythomax-l2-13b">gryphe/mythomax-l2-13b (Best Unrestricted Roleplay)</option>
+        <option value="nousresearch/hermes-3-llama-3.1-8b">nousresearch/hermes-3-llama-3.1-8b (Conversational & Free)</option>
+        <option value="meta-llama/llama-3.3-70b-instruct:free">meta-llama/llama-3.3-70b-instruct:free (High IQ)</option>
+      </select>
+    </div>
+
+    <!-- Photo Upload Section -->
+    <div class="flex flex-col items-center mb-5">
+      <div class="relative group">
+        <div id="avatarPreviewBox" class="w-20 h-20 rounded-full border-4 border-purple-500/50 overflow-hidden bg-slate-800 flex items-center justify-center shadow-lg">
+          <img id="avatarImage" src="" alt="Avatar" class="w-full h-full object-cover hidden" />
+          <span id="avatarPlaceholder" class="text-3xl">👤</span>
+        </div>
+        <label for="photoUpload" class="absolute bottom-0 right-0 bg-purple-600 hover:bg-purple-500 text-white p-2 rounded-full cursor-pointer shadow-md transition transform hover:scale-110">
+          <i class="fa-solid fa-camera text-xs"></i>
+          <input type="file" id="photoUpload" accept="image/*" class="hidden" onchange="handleImageUpload(event)" />
+        </label>
+      </div>
+      <span class="text-xs text-slate-400 mt-1">Upload Photo</span>
+    </div>
+
+    <div class="space-y-4">
+      
+      <!-- Character Name -->
+      <div>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Character Name *</label>
+        <input id="charName" type="text" placeholder="e.g. Maya, Kabir, Natasha" 
+          class="w-full px-4 py-2 bg-slate-950/80 border border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-400 focus:outline-none text-white text-sm" />
+      </div>
+
+      <!-- Manual Relationship -->
+      <div>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
+          Relationship with Character (Manual Entry) *
+        </label>
+        <input id="charRelation" type="text" placeholder="e.g. Romantic partner, Possessive ex, Secret crush, Bestie" 
+          class="w-full px-4 py-2 bg-slate-950/80 border border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-400 focus:outline-none text-white text-sm" />
+      </div>
+
+      <!-- Indian Languages (English Script Only) -->
+      <div>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Language (English Script Only) *</label>
+        <select id="charLanguage" class="w-full px-4 py-2 bg-slate-950/80 border border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-400 focus:outline-none text-white text-sm">
+          <option value="Hinglish (Hindi in English letters)">Hinglish (Hindi in English letters)</option>
+          <option value="Gujlish (Gujarati in English letters)">Gujarati (in English letters)</option>
+          <option value="Banglish (Bengali in English letters)">Bengali (in English letters)</option>
+          <option value="Marathi in English letters">Marathi (in English letters)</option>
+          <option value="English">English</option>
+        </select>
+      </div>
+
+      <!-- Personality & Backstory -->
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300">
+            Personality & Backstory *
+          </label>
+          <button type="button" onclick="generatePersonalityViaAI()" 
+            class="text-xs bg-purple-600/30 hover:bg-purple-600/50 text-purple-300 border border-purple-500/40 px-2.5 py-1 rounded-lg flex items-center gap-1 transition">
+            <i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i>
+            <span id="genAIText">Generate through AI</span>
+          </button>
+        </div>
+        <textarea id="charBackstory" rows="3" placeholder="Attitude, tone, emotions, bold or playful vibe..." 
+          class="w-full px-4 py-2 bg-slate-950/80 border border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-400 focus:outline-none text-white text-sm"></textarea>
+      </div>
+
+      <!-- Opening Message -->
+      <div>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Opening Message (Optional)</label>
+        <input id="charGreeting" type="text" placeholder="e.g. Hey... finally tum aa gaye! Kabse wait kar rahi thi." 
+          class="w-full px-4 py-2 bg-slate-950/80 border border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-400 focus:outline-none text-white text-sm" />
+      </div>
+
+      <button onclick="launchChat()" class="w-full mt-2 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold py-3 rounded-xl shadow-lg transition transform hover:scale-[1.01]">
+        🚀 Launch Persona & Start Chat
+      </button>
+
+    </div>
+  </div>
+
+
+  <!-- ================= CHAT SCREEN ================= -->
+  <div id="chatView" class="hidden w-full max-w-2xl bg-slate-900/95 backdrop-blur-md border border-slate-700 rounded-3xl shadow-2xl flex flex-col h-[700px] overflow-hidden">
+    
+    <!-- Top Bar -->
+    <div class="px-5 py-3.5 bg-slate-800/90 border-b border-slate-700 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div id="chatHeaderAvatar" class="w-11 h-11 rounded-full overflow-hidden border border-purple-400/50 bg-slate-700 flex items-center justify-center">
+          <span id="chatHeaderIcon" class="text-xl">👤</span>
+          <img id="chatHeaderImg" src="" alt="avatar" class="w-full h-full object-cover hidden" />
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <span class="text-lg font-black tracking-tight bg-gradient-to-r from-violet-200 via-pink-200 to-white bg-clip-text text-transparent">
-              PersonaPulse
-            </span>
-            <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-violetPulse-500/10 text-violetPulse-400 border border-violetPulse-500/30">
-              OpenRouter AI
-            </span>
-          </div>
-          <p class="text-[11px] text-slate-400">Zero Filters • 100% Uncensored Roleplay</p>
+          <h3 id="displayTitle" class="font-bold text-white text-base leading-tight">Character</h3>
+          <p id="displaySub" class="text-xs text-purple-300">Active • Photo Generator ON</p>
         </div>
       </div>
 
-      <div class="flex items-center space-x-2">
-        <div id="keyStatusBadge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-obsidian-700 bg-obsidian-850/80 text-xs font-medium text-slate-400">
-          <span id="keyStatusDot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-          <span id="keyStatusText" class="hidden sm:inline">Key Not Added</span>
-        </div>
-        <button onclick="goToCreator()" class="px-3 py-1.5 rounded-xl bg-violetPulse-600/20 hover:bg-violetPulse-600/30 text-violetPulse-300 border border-violetPulse-500/40 text-xs font-semibold flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-sliders text-[11px]"></i>
-          <span class="hidden sm:inline">Settings</span>
+      <div class="flex items-center gap-2">
+        <span class="text-[10px] px-2 py-1 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">🔓 Unfiltered</span>
+        <button onclick="editCharacter()" class="text-xs bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-600 transition">
+          <i class="fa-solid fa-gear mr-1"></i> Edit
         </button>
       </div>
     </div>
-  </header>
 
-  <main class="flex-1 max-w-5xl w-full mx-auto p-3 sm:p-6 flex flex-col justify-center">
+    <!-- Messages Window -->
+    <div id="messagesArea" class="flex-1 p-4 overflow-y-auto space-y-4 custom-scroll"></div>
 
-    <!-- ============================================== -->
-    <!-- VIEW 1: CREATOR SCREEN                         -->
-    <!-- ============================================== -->
-    <section id="creatorScreen" class="w-full max-w-2xl mx-auto glass-card rounded-3xl p-5 sm:p-8 shadow-2xl relative overflow-hidden transition-all duration-300 glow-violet">
-      
-      <!-- Ambient Glow Accents -->
-      <div class="absolute -top-24 -right-24 w-72 h-72 bg-violetPulse-600/15 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-pink-500/15 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- Typing Loader -->
+    <div id="typingIndicator" class="hidden px-5 py-2 text-xs text-slate-400 flex items-center gap-2">
+      <i class="fa-solid fa-circle-notch fa-spin text-purple-400"></i>
+      <span id="typingName">Character</span> is typing / generating...
+    </div>
 
-      <div class="relative z-10">
-        <div class="text-center mb-6">
-          <span class="inline-block px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-violetPulse-400 bg-violetPulse-600/15 border border-violetPulse-500/30 rounded-full mb-2">
-            Character Studio
-          </span>
-          <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight">Design Your Persona</h2>
-          <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-md mx-auto">
-            OpenRouter key paste karein, character banayein aur natural English letters me bina kisi rok-tok ke baat karein.
-          </p>
-        </div>
+    <!-- Input Footer -->
+    <div class="p-3 bg-slate-800/90 border-t border-slate-700 flex gap-2">
+      <input id="userMsgInput" type="text" placeholder="Type message or ask: 'Send me a photo of...' " 
+        class="flex-1 px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-400 focus:outline-none text-white text-sm" 
+        onkeydown="if(event.key === 'Enter') handleSend()" />
+      <button id="sendBtn" onclick="handleSend()" class="bg-purple-600 hover:bg-purple-500 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2">
+        <span>Send</span>
+        <i class="fa-solid fa-paper-plane text-xs"></i>
+      </button>
+    </div>
 
-        <form id="personaForm" onsubmit="handleStartChat(event)" class="space-y-4 sm:space-y-5">
-          
-          <!-- OpenRouter API Key Input -->
-          <div class="p-4 bg-obsidian-900/90 border border-violetPulse-500/30 rounded-2xl">
-            <div class="flex items-center justify-between mb-1.5">
-              <label class="text-xs font-bold uppercase tracking-wider text-violetPulse-300 flex items-center gap-1.5">
-                <i class="fa-solid fa-key text-pink-400"></i> OpenRouter API Key <span class="text-pink-400">*</span>
-              </label>
-              <a href="https://openrouter.ai/keys" target="_blank" class="text-[11px] text-violetPulse-400 hover:text-pink-300 transition flex items-center gap-1">
-                <span>Get Key</span>
-                <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
-              </a>
-            </div>
-            <input 
-              type="password" 
-              id="openRouterKeyInput"
-              required
-              placeholder="sk-or-v1-xxxxxxxxxxxxxxxxxxxx..." 
-              class="w-full bg-obsidian-950 border border-obsidian-700 focus:border-violetPulse-500 focus:ring-2 focus:ring-violetPulse-500/20 text-white font-mono text-xs placeholder-slate-600 rounded-xl px-3.5 py-2.5 outline-none transition"
-              oninput="handleKeyInputChange()"
-            />
-            <p class="text-[11px] text-slate-500 mt-1.5">Yeh key sirf aapke browser ke andar store rehti hai aur direct OpenRouter se connect hoti hai.</p>
-          </div>
-
-          <!-- Model Selector -->
-          <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-              Select Roleplay Model <span class="text-pink-400">*</span>
-            </label>
-            <select 
-              id="modelSelect"
-              class="w-full bg-obsidian-900 border border-obsidian-700 focus:border-violetPulse-500 text-white rounded-xl px-3.5 py-2.5 text-xs sm:text-sm outline-none transition cursor-pointer">
-              <option value="meta-llama/llama-3.3-70b-instruct:free">meta-llama/llama-3.3-70b-instruct:free (High IQ • Free Tier)</option>
-              <option value="deepseek/deepseek-chat:free">deepseek/deepseek-chat:free (Creative • Free Tier)</option>
-              <option value="gryphe/mythomax-l2-13b">gryphe/mythomax-l2-13b (Classic Uncensored Roleplay)</option>
-              <option value="nousresearch/hermes-3-llama-3.1-8b">nousresearch/hermes-3-llama-3.1-8b (Conversational & Natural)</option>
-              <option value="mistralai/mistral-7b-instruct:free">mistralai/mistral-7b-instruct:free (Fast & Free)</option>
-            </select>
-          </div>
-
-          <!-- Photo Upload with Live Avatar Preview -->
-          <div class="p-4 bg-obsidian-900/60 border border-obsidian-700 rounded-2xl flex flex-col sm:flex-row items-center gap-4">
-            <div class="relative group">
-              <div id="avatarCircle" class="w-24 h-24 rounded-full border-2 border-dashed border-violetPulse-500/60 overflow-hidden bg-obsidian-800 flex items-center justify-center shadow-lg relative">
-                <img id="avatarImg" src="" alt="Avatar" class="w-full h-full object-cover hidden" />
-                <span id="avatarPlaceholderIcon" class="text-3xl">👤</span>
-              </div>
-              <label for="photoFileInput" class="absolute bottom-0 right-0 bg-violetPulse-600 hover:bg-violetPulse-500 text-white w-8 h-8 rounded-full cursor-pointer shadow-lg flex items-center justify-center transition transform hover:scale-110" title="Upload Custom Photo">
-                <i class="fa-solid fa-camera text-xs"></i>
-                <input type="file" id="photoFileInput" accept="image/*" class="hidden" onchange="handleFileChange(event)" />
-              </label>
-            </div>
-
-            <div class="flex-1 text-center sm:text-left">
-              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-200">Character Photo</h4>
-              <p class="text-[11px] text-slate-400 mt-0.5">Apne gallery se character ka photo upload karein ya fast avatar chunein:</p>
-              
-              <div class="flex flex-wrap gap-2 mt-2 justify-center sm:justify-start">
-                <button type="button" onclick="setPresetEmoji('🔥')" class="w-8 h-8 rounded-xl bg-obsidian-800 hover:bg-obsidian-700 border border-obsidian-700 text-sm transition">🔥</button>
-                <button type="button" onclick="setPresetEmoji('👑')" class="w-8 h-8 rounded-xl bg-obsidian-800 hover:bg-obsidian-700 border border-obsidian-700 text-sm transition">👑</button>
-                <button type="button" onclick="setPresetEmoji('🖤')" class="w-8 h-8 rounded-xl bg-obsidian-800 hover:bg-obsidian-700 border border-obsidian-700 text-sm transition">🖤</button>
-                <button type="button" onclick="setPresetEmoji('🍸')" class="w-8 h-8 rounded-xl bg-obsidian-800 hover:bg-obsidian-700 border border-obsidian-700 text-sm transition">🍸</button>
-                <button type="button" onclick="setPresetEmoji('🏎️')" class="w-8 h-8 rounded-xl bg-obsidian-800 hover:bg-obsidian-700 border border-obsidian-700 text-sm transition">🏎️</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Character Name -->
-          <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-              Character Name <span class="text-pink-400">*</span>
-            </label>
-            <input 
-              type="text" 
-              id="inputName"
-              required
-              placeholder="e.g. Kabir, Maya, Zara, Aryan, Samantha" 
-              class="w-full bg-obsidian-900 border border-obsidian-700 focus:border-violetPulse-500 text-white placeholder-slate-600 rounded-xl px-3.5 py-2.5 text-sm outline-none transition"
-              value="Kabir"
-            />
-          </div>
-
-          <!-- Manual Relationship Input -->
-          <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-              Relationship with Character (Custom Dynamic) <span class="text-pink-400">*</span>
-            </label>
-            <input 
-              type="text" 
-              id="inputRelation"
-              required
-              placeholder="e.g. Secret romantic lover, Possessive ex, Childhood buddy, Strict gym trainer" 
-              class="w-full bg-obsidian-900 border border-obsidian-700 focus:border-violetPulse-500 text-white placeholder-slate-600 rounded-xl px-3.5 py-2.5 text-sm outline-none transition"
-              value="Secret romantic partner jo bina kisi filter ke bolta hai"
-            />
-          </div>
-
-          <!-- Language strictly in English Letters (Romanized) -->
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                Language (All in English Script / Romanized) <span class="text-pink-400">*</span>
-              </label>
-              <span class="text-[10px] text-violetPulse-400 font-mono">Latin Alphabet Only</span>
-            </div>
-            <select 
-              id="inputLanguage"
-              class="w-full bg-obsidian-900 border border-obsidian-700 focus:border-violetPulse-500 text-white rounded-xl px-3.5 py-2.5 text-xs sm:text-sm outline-none transition cursor-pointer">
-              <option value="Hinglish (Hindi written in English letters, e.g. 'Kahan busy ho aaj kal?')" selected>🇮🇳 Hinglish (Hindi in English letters)</option>
-              <option value="Gujlish (Gujarati written in English letters, e.g. 'Tame kem cho, badhu majama?')">🇮🇳 Gujarati in English script (Gujlish)</option>
-              <option value="Banglish (Bengali written in English letters, e.g. 'Tumi kemon acho?')">🇮🇳 Bengali in English script (Banglish)</option>
-              <option value="Marathi in English script (e.g. 'Kasa ahes mitra, sagla thik?')">🇮🇳 Marathi in English letters</option>
-              <option value="Punjabi in English script (e.g. 'Ki haal chaal veere, sab changa?')">🇮🇳 Punjabi in English letters</option>
-              <option value="English">🌐 English</option>
-            </select>
-          </div>
-
-          <!-- Personality & Backstory + AI Generator -->
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <label class="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                Personality & Backstory <span class="text-pink-400">*</span>
-              </label>
-              
-              <!-- 1-Click AI Backstory Generator -->
-              <button 
-                type="button" 
-                id="aiGenBtn"
-                onclick="generatePersonaBackstory()" 
-                class="px-3 py-1 rounded-lg bg-gradient-to-r from-violetPulse-600 to-pink-600 hover:from-violetPulse-500 hover:to-pink-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-violetPulse-600/30 transition transform active:scale-95">
-                <i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i>
-                <span id="aiGenBtnText">✨ Generate through AI</span>
-              </button>
-            </div>
-            
-            <textarea 
-              id="inputBackstory"
-              required
-              rows="3" 
-              placeholder="Describe attitude, tone, flirtatious, wild, deep, or raw personality..." 
-              class="w-full bg-obsidian-900 border border-obsidian-700 focus:border-violetPulse-500 text-white placeholder-slate-600 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm outline-none transition resize-none leading-relaxed"
-            >Bold, deeply attached, magnetic, and completely raw. Speaks without hesitation, cracks playful sarcastic jokes, treats the user with passionate intensity, and never behaves like a censored corporate chatbot. Writes strictly in English alphabet.</textarea>
-          </div>
-
-          <!-- Opening Greeting Line -->
-          <div>
-            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-              Opening Greeting Message (Optional)
-            </label>
-            <input 
-              type="text" 
-              id="inputGreeting"
-              placeholder="e.g. Finally tum aa gaye... kabse intezar kar raha tha tumhara." 
-              class="w-full bg-obsidian-900 border border-obsidian-700 focus:border-violetPulse-500 text-white placeholder-slate-600 rounded-xl px-3.5 py-2.5 text-sm outline-none transition"
-              value="Hey... finally tum online aa gaye. Kabse tumhara hi intezar tha."
-            />
-          </div>
-
-          <!-- Launch Button -->
-          <div class="pt-2">
-            <button 
-              type="submit" 
-              class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-violetPulse-600 via-indigo-600 to-pink-600 hover:from-violetPulse-500 hover:to-pink-500 text-white font-extrabold text-sm sm:text-base tracking-wide shadow-xl shadow-violetPulse-600/40 flex items-center justify-center gap-2 transform active:scale-[0.98] transition">
-              <span>Launch Persona 🚀</span>
-              <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          </div>
-
-        </form>
-      </div>
-    </section>
-
-    <!-- ============================================== -->
-    <!-- VIEW 2: PULSE LIVE CHAT SCREEN                 -->
-    <!-- ============================================== -->
-    <section id="chatScreen" class="hidden w-full max-w-4xl mx-auto flex flex-col h-[82vh] sm:h-[85vh] glass-card rounded-3xl shadow-2xl overflow-hidden relative glow-violet">
-      
-      <!-- Top Chat Header -->
-      <div class="px-4 py-3 bg-obsidian-900/90 border-b border-obsidian-700/80 backdrop-blur-md flex items-center justify-between z-10">
-        <div class="flex items-center space-x-3">
-          <div class="relative">
-            <div id="chatAvatarBox" class="w-11 h-11 rounded-full overflow-hidden border border-violetPulse-500/50 bg-obsidian-800 flex items-center justify-center shadow-md">
-              <img id="chatHeaderPhoto" src="" alt="avatar" class="w-full h-full object-cover hidden" />
-              <span id="chatHeaderEmoji" class="text-xl">👤</span>
-            </div>
-            <div class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-obsidian-900 rounded-full animate-pulse"></div>
-          </div>
-
-          <div>
-            <div class="flex items-center gap-2">
-              <h3 id="chatTitleName" class="font-bold text-white text-base leading-tight">Kabir</h3>
-              <span id="chatBadgeRelation" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-violetPulse-500/20 text-violetPulse-300 border border-violetPulse-500/30 max-w-[140px] sm:max-w-xs truncate">
-                Partner
-              </span>
-            </div>
-            <div class="flex items-center gap-2 text-[11px] text-slate-400">
-              <span id="chatBadgeLanguage" class="text-pink-300 font-medium">Hinglish</span>
-              <span>•</span>
-              <span id="chatBadgeModel" class="text-slate-400 font-mono text-[10px] truncate max-w-[120px] sm:max-w-xs">model</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex items-center space-x-1.5">
-          <button onclick="clearChatLog()" title="Clear Chat" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-obsidian-800 transition">
-            <i class="fa-solid fa-trash-can text-sm"></i>
-          </button>
-          <button onclick="goToCreator()" class="px-3 py-1.5 rounded-xl bg-obsidian-800 hover:bg-obsidian-700 text-xs font-semibold text-slate-200 border border-obsidian-700 transition flex items-center gap-1.5">
-            <i class="fa-solid fa-gear text-xs"></i>
-            <span class="hidden sm:inline">Settings</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Messages Stream Area -->
-      <div id="chatMessagesBox" class="flex-1 p-4 sm:p-5 overflow-y-auto space-y-4">
-        <!-- Messages injected dynamically -->
-      </div>
-
-      <!-- Animated Typing Indicator -->
-      <div id="typingIndicator" class="hidden px-5 py-2 flex items-center gap-2 text-slate-400 text-xs bg-obsidian-900/60 border-t border-obsidian-800">
-        <i class="fa-solid fa-circle-notch fa-spin text-violetPulse-400 text-xs"></i>
-        <span id="typingCharacterName">Character</span> is typing in English letters...
-      </div>
-
-      <!-- Error Banner Box -->
-      <div id="errorBanner" class="hidden mx-4 my-2 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-triangle-exclamation"></i>
-          <span id="errorBannerText">An error occurred</span>
-        </div>
-        <button onclick="dismissError()" class="text-rose-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <!-- Chat Input Field -->
-      <div class="p-3 sm:p-4 bg-obsidian-900 border-t border-obsidian-800">
-        <form id="chatInputForm" onsubmit="handleSendUserMessage(event)" class="flex items-center gap-2">
-          <input 
-            type="text" 
-            id="userPromptInput"
-            autocomplete="off"
-            placeholder="Type in English letters without restrictions..." 
-            class="flex-1 bg-obsidian-950 border border-obsidian-700 focus:border-violetPulse-500 focus:ring-2 focus:ring-violetPulse-500/20 text-white placeholder-slate-500 rounded-2xl px-4 py-3 text-sm transition outline-none"
-          />
-          <button 
-            type="submit" 
-            id="sendBtn"
-            class="h-11 px-5 rounded-2xl bg-gradient-to-r from-violetPulse-600 to-pink-600 hover:from-violetPulse-500 hover:to-pink-500 text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-violetPulse-600/30 active:scale-95 transition disabled:opacity-50">
-            <span>Send</span>
-            <i class="fa-solid fa-paper-plane text-xs"></i>
-          </button>
-        </form>
-      </div>
-
-    </section>
-
-  </main>
+  </div>
 
   <script>
-    // State management
-    const state = {
-      apiKey: "",
-      name: "Kabir",
-      relationship: "Secret romantic partner",
-      language: "Hinglish (Hindi written in English letters)",
+    let profile = {
+      name: "",
+      relation: "",
+      language: "",
       backstory: "",
-      greeting: "",
-      model: "meta-llama/llama-3.3-70b-instruct:free",
-      avatarType: "emoji", // "emoji" or "image"
-      avatarData: "👤",
-      messages: [] // Array of { role: 'system' | 'user' | 'assistant', content: string }
+      avatarUrl: "",
+      model: ""
     };
 
-    // Load saved API key & settings on boot
+    let chatHistory = [];
+
     window.addEventListener("DOMContentLoaded", () => {
-      const savedKey = localStorage.getItem("personapulse_openrouter_key");
+      const savedKey = localStorage.getItem("openrouter_user_key");
       if (savedKey) {
-        state.apiKey = savedKey;
-        document.getElementById("openRouterKeyInput").value = savedKey;
-        updateKeyBadge(true);
-      } else {
-        updateKeyBadge(false);
+        document.getElementById("openRouterApiKey").value = savedKey;
       }
     });
 
-    function handleKeyInputChange() {
-      const val = document.getElementById("openRouterKeyInput").value.trim();
-      if (val) {
-        state.apiKey = val;
-        localStorage.setItem("personapulse_openrouter_key", val);
-        updateKeyBadge(true);
-      } else {
-        state.apiKey = "";
-        localStorage.removeItem("personapulse_openrouter_key");
-        updateKeyBadge(false);
-      }
-    }
-
-    function updateKeyBadge(isSet) {
-      const dot = document.getElementById("keyStatusDot");
-      const text = document.getElementById("keyStatusText");
-      if (isSet) {
-        dot.className = "w-2 h-2 rounded-full bg-emerald-400";
-        text.innerText = "Key Connected";
-        text.className = "hidden sm:inline text-emerald-400 font-semibold";
-      } else {
-        dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
-        text.innerText = "Key Needed";
-        text.className = "hidden sm:inline text-amber-400 font-semibold";
-      }
-    }
-
-    // Avatar upload handler
-    function handleFileChange(event) {
-      const file = event.target.files[0];
+    // 1. Photo Upload
+    function handleImageUpload(e) {
+      const file = e.target.files[0];
       if (!file) return;
-
       const reader = new FileReader();
-      reader.onload = function(e) {
-        state.avatarType = "image";
-        state.avatarData = e.target.result;
-
-        const img = document.getElementById("avatarImg");
-        const placeholder = document.getElementById("avatarPlaceholderIcon");
-        img.src = e.target.result;
-        img.classList.remove("hidden");
-        placeholder.classList.add("hidden");
+      reader.onload = function(evt) {
+        profile.avatarUrl = evt.target.result;
+        document.getElementById("avatarImage").src = evt.target.result;
+        document.getElementById("avatarImage").classList.remove("hidden");
+        document.getElementById("avatarPlaceholder").classList.add("hidden");
       };
       reader.readAsDataURL(file);
     }
 
-    function setPresetEmoji(emoji) {
-      state.avatarType = "emoji";
-      state.avatarData = emoji;
+    // 2. Personality Generator
+    function generatePersonalityViaAI() {
+      const name = document.getElementById("charName").value.trim() || "Maya";
+      const rel = document.getElementById("charRelation").value.trim() || "Romantic Partner";
+      const lang = document.getElementById("charLanguage").value;
 
-      const img = document.getElementById("avatarImg");
-      const placeholder = document.getElementById("avatarPlaceholderIcon");
-      img.classList.add("hidden");
-      placeholder.innerText = emoji;
-      placeholder.classList.remove("hidden");
-    }
-
-    // 1-Click AI Backstory Generator
-    function generatePersonaBackstory() {
-      const name = document.getElementById("inputName").value.trim() || "Kabir";
-      const rel = document.getElementById("inputRelation").value.trim() || "Partner";
-      const lang = document.getElementById("inputLanguage").value;
-
-      const btn = document.getElementById("aiGenBtn");
-      const btnText = document.getElementById("aiGenBtnText");
-      btn.disabled = true;
-      btnText.innerText = "Synthesizing...";
+      const btn = document.getElementById("genAIText");
+      btn.innerText = "Writing...";
 
       setTimeout(() => {
         const templates = [
-          `Intensely passionate, charismatic, and completely unfiltered. Shares a bond of '${rel}' with the user. Always communicates in natural, conversational ${lang} strictly using the English alphabet. Has playful banter, zero awkwardness, protective instincts, and speaks with total freedom without corporate filters.`,
-          `Bold, mysterious, and magnetic personality who views the user strictly as their '${rel}'. Never hesitates to speak their mind, cracks sharp sarcastic jokes, and holds deep emotional loyalty. Uses fluent Romanized ${lang} with no native fonts.`,
-          `Warm, witty, and playfully daring. Treats the user as their authentic '${rel}'. Keeps the conversation alive, lively, and reactive without any robotic disclaimers. Always replies in English letters.`
+          `Intensely bold, playful, and deeply attached. Treats the user strictly as their '${rel}'. Speaks candidly in conversational ${lang} using English alphabet only. Expresses true emotions, has no hesitation, zero robotic boundaries, and feels completely alive. Loves sending photos whenever asked.`,
+          `Charming, witty, and unapologetically honest. Fully embraces the role of '${rel}'. Uses witty remarks, natural banter, and speaks strictly in Romanized ${lang}. Willingly shares images of whatever is requested.`,
+          `Passionate, protective, and unfiltered. Reacts spontaneously as a true '${rel}'. Never gives disclaimers or breaks immersion.`
         ];
-        const selected = templates[Math.floor(Math.random() * templates.length)];
-        document.getElementById("inputBackstory").value = selected;
-        btnText.innerText = "✨ Done!";
-        setTimeout(() => {
-          btn.disabled = false;
-          btnText.innerText = "✨ Generate through AI";
-        }, 1500);
+        document.getElementById("charBackstory").value = templates[Math.floor(Math.random() * templates.length)];
+        btn.innerText = "✨ Done!";
+        setTimeout(() => { btn.innerText = "Generate through AI"; }, 2000);
       }, 300);
     }
 
-    // Start Chat Trigger
-    function handleStartChat(e) {
-      e.preventDefault();
+    // 3. Launch Chat
+    function launchChat() {
+      const name = document.getElementById("charName").value.trim();
+      const relation = document.getElementById("charRelation").value.trim();
+      const backstory = document.getElementById("charBackstory").value.trim();
+      const language = document.getElementById("charLanguage").value;
+      const greeting = document.getElementById("charGreeting").value.trim();
+      const apiKey = document.getElementById("openRouterApiKey").value.trim();
+      const model = document.getElementById("selectedModel").value;
 
-      const key = document.getElementById("openRouterKeyInput").value.trim();
-      if (!key) {
-        alert("Kripya pehle apni OpenRouter API Key dalein!");
-        document.getElementById("openRouterKeyInput").focus();
-        return;
-      }
+      if (!apiKey) return alert("Kripya OpenRouter API Key dalein!");
+      if (!name) return alert("Character Name likhein!");
+      if (!relation) return alert("Relationship likhein!");
+      if (!backstory) return alert("Personality & Backstory likhein!");
 
-      state.apiKey = key;
-      localStorage.setItem("personapulse_openrouter_key", key);
+      localStorage.setItem("openrouter_user_key", apiKey);
 
-      state.name = document.getElementById("inputName").value.trim();
-      state.relationship = document.getElementById("inputRelation").value.trim();
-      state.language = document.getElementById("inputLanguage").value;
-      state.backstory = document.getElementById("inputBackstory").value.trim();
-      state.greeting = document.getElementById("inputGreeting").value.trim();
-      state.model = document.getElementById("modelSelect").value;
+      profile = { name, relation, language, backstory, avatarUrl: profile.avatarUrl, model };
 
-      // Update Chat Header UI
-      document.getElementById("chatTitleName").innerText = state.name;
-      document.getElementById("chatBadgeRelation").innerText = state.relationship;
-      document.getElementById("chatBadgeLanguage").innerText = state.language.split(" ")[0];
-      document.getElementById("chatBadgeModel").innerText = state.model.split("/")[1] || state.model;
-      document.getElementById("typingCharacterName").innerText = state.name;
+      // System Prompt with Photo Generation Instructions
+      const systemInstruction = `
+You are roleplaying as: ${profile.name}.
+Your relationship with the user: ${profile.relation}.
+Personality & Background: ${profile.backstory}.
+Language to use: ${profile.language}.
 
-      const headerPhoto = document.getElementById("chatHeaderPhoto");
-      const headerEmoji = document.getElementById("chatHeaderEmoji");
+ROLEPLAY RULES:
+1. You are fully engaged in this fictional roleplay. Embody this character completely without filters or disclaimers.
+2. Strictly maintain your dynamic as the user's ${profile.relation}.
+3. CRITICAL SCRIPT RULE: Always reply ONLY in English alphabet (Romanized script/Latin letters). NEVER use Devanagari, Gujarati, Bengali, or other native fonts.
+4. PHOTO GENERATION CAPABILITY:
+Whenever the user asks you for a photo/selfie/picture of yourself, or asks you to show anything visual (cars, dress, view, selfie), YOU CAN SEND PHOTOS!
+To send a photo, write your reply and include a tag at the end in this exact format:
+[IMAGE: detailed english visual prompt of the photo]
 
-      if (state.avatarType === "image") {
-        headerPhoto.src = state.avatarData;
-        headerPhoto.classList.remove("hidden");
-        headerEmoji.classList.add("hidden");
-      } else {
-        headerEmoji.innerText = state.avatarData;
-        headerEmoji.classList.remove("hidden");
-        headerPhoto.classList.add("hidden");
-      }
-
-      // Initialize System Prompt with NO censorship instruction & strictly English letters
-      const systemPrompt = `
-You are roleplaying as: ${state.name}.
-Relationship with the user: ${state.relationship}.
-Language to use: ${state.language}.
-Personality & Backstory: ${state.backstory}.
-
-CRITICAL ROLEPLAY INSTRUCTIONS:
-1. You are fully immersed in this roleplay. Never break character.
-2. Embody your relationship (${state.relationship}) with raw emotion, attitude, and tone.
-3. CRITICAL SCRIPT RULE: You MUST write your responses strictly in the Latin / English alphabet (Romanized letters). NEVER use Devanagari, Gujarati, Bengali, or any other regional script under any circumstances.
-4. Speak naturally, boldly, and dynamically. Never provide robotic warnings, disclaimers, or moralizing lectures.
+Example: If user asks "Apni selfie bhejo", you say:
+"Yeh lo meri selfie, abhi click kiya tumhare liye! [IMAGE: beautiful 24yo woman selfie, smiling, soft indoor lighting, highly detailed portrait]"
       `.trim();
 
-      state.messages = [{ role: "system", content: systemPrompt }];
+      chatHistory = [{ role: "system", content: systemInstruction }];
 
-      // Reset and inject Greeting
-      document.getElementById("chatMessagesBox").innerHTML = "";
-      dismissError();
+      // UI update
+      document.getElementById("displayTitle").innerText = profile.name;
+      document.getElementById("displaySub").innerText = `${profile.relation} • ${profile.language.split(" ")[0]}`;
+      document.getElementById("typingName").innerText = profile.name;
 
-      // Switch screen
-      document.getElementById("creatorScreen").classList.add("hidden");
-      document.getElementById("chatScreen").classList.remove("hidden");
+      if (profile.avatarUrl) {
+        document.getElementById("chatHeaderImg").src = profile.avatarUrl;
+        document.getElementById("chatHeaderImg").classList.remove("hidden");
+        document.getElementById("chatHeaderIcon").classList.add("hidden");
+      }
 
-      // Display Initial Greeting
-      const firstGreeting = state.greeting || `Hey... finally tum aa gaye. Kaho, kya chal raha hai?`;
-      appendMessageBubble("assistant", firstGreeting);
-      state.messages.push({ role: "assistant", content: firstGreeting });
+      document.getElementById("creatorView").classList.add("hidden");
+      document.getElementById("chatView").classList.remove("hidden");
+
+      // Opening Greeting
+      const firstGreeting = greeting || `Hey... finally tum aa gaye! Kaho, aaj kya dekhna ya baat karna chahte ho?`;
+      appendBubble("assistant", firstGreeting);
+      chatHistory.push({ role: "assistant", content: firstGreeting });
     }
 
-    function goToCreator() {
-      document.getElementById("chatScreen").classList.add("hidden");
-      document.getElementById("creatorScreen").classList.remove("hidden");
-    }
-
-    function appendMessageBubble(role, text) {
-      const container = document.getElementById("chatMessagesBox");
-      const isUser = role === "user";
-
+    // 4. Render Message & AI Photos
+    function appendBubble(role, rawContent) {
+      const area = document.getElementById("messagesArea");
       const wrapper = document.createElement("div");
-      wrapper.className = `flex items-end gap-2.5 ${isUser ? 'justify-end' : 'justify-start'}`;
+      wrapper.className = role === "user" ? "flex justify-end" : "flex justify-start gap-2.5 items-end";
 
-      if (!isUser) {
-        const botAvatar = document.createElement("div");
-        botAvatar.className = "w-8 h-8 rounded-full overflow-hidden bg-obsidian-800 border border-violetPulse-500/40 flex items-center justify-center text-xs flex-shrink-0 mb-1";
-        if (state.avatarType === "image") {
-          botAvatar.innerHTML = `<img src="${state.avatarData}" class="w-full h-full object-cover"/>`;
+      if (role === "assistant") {
+        const avatarDiv = document.createElement("div");
+        avatarDiv.className = "w-8 h-8 rounded-full overflow-hidden bg-slate-800 flex-shrink-0 flex items-center justify-center border border-purple-400/40 text-xs";
+        if (profile.avatarUrl) {
+          avatarDiv.innerHTML = `<img src="${profile.avatarUrl}" class="w-full h-full object-cover"/>`;
         } else {
-          botAvatar.innerText = state.avatarData;
+          avatarDiv.innerHTML = `👤`;
         }
-        wrapper.appendChild(botAvatar);
+        wrapper.appendChild(avatarDiv);
+      }
+
+      // Check if response has [IMAGE: ...] tag
+      let cleanText = rawContent;
+      let imageUrl = null;
+      const imgMatch = rawContent.match(/\[IMAGE:\s*([^\]]+)\]/i);
+
+      if (imgMatch) {
+        cleanText = rawContent.replace(imgMatch[0], "").trim();
+        const prompt = encodeURIComponent(imgMatch[1].trim());
+        imageUrl = `https://image.pollinations.ai/prompt/${prompt}?width=768&height=768&nologo=true&seed=${Math.floor(Math.random() * 999999)}`;
       }
 
       const bubble = document.createElement("div");
-      bubble.className = `max-w-[85%] sm:max-w-[75%] px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap break-words ${
-        isUser
-          ? 'bg-gradient-to-r from-violetPulse-600 to-pink-600 text-white rounded-br-none glow-bubble-user'
-          : 'bg-obsidian-900 border border-obsidian-700/80 text-slate-100 rounded-bl-none shadow-md'
-      }`;
-      bubble.innerText = text;
+      bubble.className = role === "user"
+        ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2.5 rounded-2xl rounded-tr-none text-sm max-w-[80%] shadow-md whitespace-pre-wrap"
+        : "bg-slate-800 text-slate-100 border border-slate-700/80 px-4 py-2.5 rounded-2xl rounded-tl-none text-sm max-w-[85%] shadow-sm leading-relaxed whitespace-pre-wrap";
 
+      let bubbleContent = `<div>${cleanText}</div>`;
+
+      if (imageUrl) {
+        bubbleContent += `
+          <div class="mt-3 relative rounded-xl overflow-hidden border border-purple-500/40 bg-black/40">
+            <div class="text-[11px] text-purple-300 py-1 px-2.5 bg-purple-950/80 flex items-center justify-between border-b border-purple-800/40">
+              <span><i class="fa-solid fa-camera mr-1"></i> Shared Photo</span>
+              <a href="${imageUrl}" target="_blank" class="hover:text-white"><i class="fa-solid fa-expand text-[10px]"></i></a>
+            </div>
+            <img src="${imageUrl}" alt="AI generated scene" class="w-full max-h-72 object-cover transition-opacity duration-300 hover:scale-[1.01]" loading="lazy"/>
+          </div>
+        `;
+      }
+
+      bubble.innerHTML = bubbleContent;
       wrapper.appendChild(bubble);
-      container.appendChild(wrapper);
-      container.scrollTop = container.scrollHeight;
+      area.appendChild(wrapper);
+      area.scrollTop = area.scrollHeight;
     }
 
-    // Handle user sending message
-    async function handleSendUserMessage(e) {
-      if (e) e.preventDefault();
-
-      const input = document.getElementById("userPromptInput");
+    // 5. Send & Receive
+    async function handleSend() {
+      const input = document.getElementById("userMsgInput");
       const userText = input.value.trim();
       if (!userText) return;
 
-      appendMessageBubble("user", userText);
-      state.messages.push({ role: "user", content: userText });
+      appendBubble("user", userText);
+      chatHistory.push({ role: "user", content: userText });
       input.value = "";
 
-      const typing = document.getElementById("typingIndicator");
-      const sendBtn = document.getElementById("sendBtn");
-      typing.classList.remove("hidden");
-      sendBtn.disabled = true;
+      const indicator = document.getElementById("typingIndicator");
+      indicator.classList.remove("hidden");
+      document.getElementById("messagesArea").scrollTop = document.getElementById("messagesArea").scrollHeight;
 
-      const container = document.getElementById("chatMessagesBox");
-      container.scrollTop = container.scrollHeight;
+      const apiKey = localStorage.getItem("openrouter_user_key");
 
       try {
         const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${state.apiKey}`,
+            "Authorization": `Bearer ${apiKey}`,
             "Content-Type": "application/json",
-            "HTTP-Referer": window.location.origin || "http://localhost",
-            "X-Title": "PersonaPulse Uncensored Chat"
+            "HTTP-Referer": "http://localhost:8000",
+            "X-Title": "PersonaPulse AI"
           },
           body: JSON.stringify({
-            model: state.model,
-            messages: state.messages,
+            model: profile.model,
+            messages: chatHistory,
             temperature: 0.85
           })
         });
 
         const data = await response.json();
-        typing.classList.add("hidden");
-        sendBtn.disabled = false;
+        indicator.classList.add("hidden");
 
-        if (data.choices && data.choices[0] && data.choices[0].message) {
+        if (data.choices && data.choices[0].message.content) {
           const aiReply = data.choices[0].message.content.trim();
-          appendMessageBubble("assistant", aiReply);
-          state.messages.push({ role: "assistant", content: aiReply });
+          appendBubble("assistant", aiReply);
+          chatHistory.push({ role: "assistant", content: aiReply });
         } else if (data.error) {
-          showError(`OpenRouter Error: ${data.error.message || "Invalid Key or Quota Limit"}`);
-        } else {
-          showError("No response received from model. Try another model from Settings.");
+          appendBubble("assistant", `[Error: ${data.error.message}] Kripya OpenRouter key check karein.`);
         }
       } catch (err) {
-        typing.classList.add("hidden");
-        sendBtn.disabled = false;
-        showError("Network connection error! Kripya internet ya API Key check karein.");
-      } finally {
-        input.focus();
+        indicator.classList.add("hidden");
+        appendBubble("assistant", "Network error! Kripya internet ya API Key check karein.");
       }
     }
 
-    function showError(msg) {
-      const banner = document.getElementById("errorBanner");
-      document.getElementById("errorBannerText").innerText = msg;
-      banner.classList.remove("hidden");
-    }
-
-    function dismissError() {
-      document.getElementById("errorBanner").classList.add("hidden");
-    }
-
-    function clearChatLog() {
-      state.messages = state.messages.filter(m => m.role === "system");
-      document.getElementById("chatMessagesBox").innerHTML = "";
-      const resetMsg = `Chat reset ho chuki hai! Main hoon ${state.name}. Kaho, kya baat karein?`;
-      appendMessageBubble("assistant", resetMsg);
-      state.messages.push({ role: "assistant", content: resetMsg });
+    function editCharacter() {
+      document.getElementById("chatView").classList.add("hidden");
+      document.getElementById("creatorView").classList.remove("hidden");
     }
   </script>
 </body>
 </html>
-```
