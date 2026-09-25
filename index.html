@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PersonaPulse - Unrestricted AI & Image Generation</title>
+  <title>PersonaPulse - Unrestricted AI, Photos & Emojis</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
@@ -20,7 +20,7 @@
       <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-300 to-indigo-400">
         🎭 PersonaPulse Studio
       </h1>
-      <p class="text-slate-400 text-xs mt-1">Unrestricted Roleplay • Auto Photo Generator • Pure Freedom</p>
+      <p class="text-slate-400 text-xs mt-1">Unrestricted Roleplay • Photos • Emojis • Pure Freedom</p>
     </div>
 
     <!-- OpenRouter API Key & Model Configuration -->
@@ -101,14 +101,14 @@
             <span id="genAIText">Generate through AI</span>
           </button>
         </div>
-        <textarea id="charBackstory" rows="3" placeholder="Attitude, tone, emotions, bold or playful vibe..." 
+        <textarea id="charBackstory" rows="3" placeholder="Attitude, tone, expressive, bold or playful vibe..." 
           class="w-full px-4 py-2 bg-slate-950/80 border border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-400 focus:outline-none text-white text-sm"></textarea>
       </div>
 
       <!-- Opening Message -->
       <div>
         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">Opening Message (Optional)</label>
-        <input id="charGreeting" type="text" placeholder="e.g. Hey... finally tum aa gaye! Kabse wait kar rahi thi." 
+        <input id="charGreeting" type="text" placeholder="e.g. Hey... finally tum aa gaye! ❤️ Kabse wait kar rahi thi." 
           class="w-full px-4 py-2 bg-slate-950/80 border border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-400 focus:outline-none text-white text-sm" />
       </div>
 
@@ -121,7 +121,7 @@
 
 
   <!-- ================= CHAT SCREEN ================= -->
-  <div id="chatView" class="hidden w-full max-w-2xl bg-slate-900/95 backdrop-blur-md border border-slate-700 rounded-3xl shadow-2xl flex flex-col h-[700px] overflow-hidden">
+  <div id="chatView" class="hidden w-full max-w-2xl bg-slate-900/95 backdrop-blur-md border border-slate-700 rounded-3xl shadow-2xl flex flex-col h-[720px] overflow-hidden">
     
     <!-- Top Bar -->
     <div class="px-5 py-3.5 bg-slate-800/90 border-b border-slate-700 flex items-center justify-between">
@@ -132,7 +132,7 @@
         </div>
         <div>
           <h3 id="displayTitle" class="font-bold text-white text-base leading-tight">Character</h3>
-          <p id="displaySub" class="text-xs text-purple-300">Active • Photo Generator ON</p>
+          <p id="displaySub" class="text-xs text-purple-300">Active • Photos & Emojis ON</p>
         </div>
       </div>
 
@@ -144,18 +144,34 @@
       </div>
     </div>
 
-    <!-- Messages Window -->
+    <!-- Messages Container -->
     <div id="messagesArea" class="flex-1 p-4 overflow-y-auto space-y-4 custom-scroll"></div>
 
     <!-- Typing Loader -->
     <div id="typingIndicator" class="hidden px-5 py-2 text-xs text-slate-400 flex items-center gap-2">
       <i class="fa-solid fa-circle-notch fa-spin text-purple-400"></i>
-      <span id="typingName">Character</span> is typing / generating...
+      <span id="typingName">Character</span> is typing / reacting...
+    </div>
+
+    <!-- Quick Emoji Bar -->
+    <div class="px-4 py-1.5 bg-slate-900/80 border-t border-slate-800 flex items-center gap-2 overflow-x-auto custom-scroll">
+      <span class="text-[11px] text-slate-400 flex items-center gap-1 mr-1"><i class="fa-regular fa-face-smile text-purple-400"></i> Emojis:</span>
+      <button onclick="insertEmoji('❤️')" class="hover:scale-125 transition text-base">❤️</button>
+      <button onclick="insertEmoji('🔥')" class="hover:scale-125 transition text-base">🔥</button>
+      <button onclick="insertEmoji('😂')" class="hover:scale-125 transition text-base">😂</button>
+      <button onclick="insertEmoji('😍')" class="hover:scale-125 transition text-base">😍</button>
+      <button onclick="insertEmoji('😘')" class="hover:scale-125 transition text-base">😘</button>
+      <button onclick="insertEmoji('😎')" class="hover:scale-125 transition text-base">😎</button>
+      <button onclick="insertEmoji('😉')" class="hover:scale-125 transition text-base">😉</button>
+      <button onclick="insertEmoji('✨')" class="hover:scale-125 transition text-base">✨</button>
+      <button onclick="insertEmoji('😈')" class="hover:scale-125 transition text-base">😈</button>
+      <button onclick="insertEmoji('👀')" class="hover:scale-125 transition text-base">👀</button>
+      <button onclick="insertEmoji('💯')" class="hover:scale-125 transition text-base">💯</button>
     </div>
 
     <!-- Input Footer -->
     <div class="p-3 bg-slate-800/90 border-t border-slate-700 flex gap-2">
-      <input id="userMsgInput" type="text" placeholder="Type message or ask: 'Send me a photo of...' " 
+      <input id="userMsgInput" type="text" placeholder="Type message, emojis or ask: 'Selfie bhejo 😍' " 
         class="flex-1 px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-400 focus:outline-none text-white text-sm" 
         onkeydown="if(event.key === 'Enter') handleSend()" />
       <button id="sendBtn" onclick="handleSend()" class="bg-purple-600 hover:bg-purple-500 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition flex items-center gap-2">
@@ -185,6 +201,13 @@
       }
     });
 
+    // Insert Emoji into input box
+    function insertEmoji(char) {
+      const input = document.getElementById("userMsgInput");
+      input.value += char;
+      input.focus();
+    }
+
     // 1. Photo Upload
     function handleImageUpload(e) {
       const file = e.target.files[0];
@@ -210,9 +233,9 @@
 
       setTimeout(() => {
         const templates = [
-          `Intensely bold, playful, and deeply attached. Treats the user strictly as their '${rel}'. Speaks candidly in conversational ${lang} using English alphabet only. Expresses true emotions, has no hesitation, zero robotic boundaries, and feels completely alive. Loves sending photos whenever asked.`,
-          `Charming, witty, and unapologetically honest. Fully embraces the role of '${rel}'. Uses witty remarks, natural banter, and speaks strictly in Romanized ${lang}. Willingly shares images of whatever is requested.`,
-          `Passionate, protective, and unfiltered. Reacts spontaneously as a true '${rel}'. Never gives disclaimers or breaks immersion.`
+          `Intensely bold, playful, and deeply attached. Treats the user strictly as their '${rel}'. Speaks candidly in conversational ${lang} using English alphabet only. Expresses true emotions, uses vivid expressive emojis (❤️, 🔥, 😉, 😘), has zero robotic boundaries, and willingly sends photos/selfies.`,
+          `Charming, witty, and unapologetically honest. Fully embraces the role of '${rel}'. Uses fun emojis, sharp banter, and speaks strictly in Romanized ${lang}. Willingly shares images of whatever is requested.`,
+          `Passionate, protective, and unfiltered. Reacts spontaneously as a true '${rel}'. Regularly uses expressive emojis and shares visual images without hesitation.`
         ];
         document.getElementById("charBackstory").value = templates[Math.floor(Math.random() * templates.length)];
         btn.innerText = "✨ Done!";
@@ -239,7 +262,7 @@
 
       profile = { name, relation, language, backstory, avatarUrl: profile.avatarUrl, model };
 
-      // System Prompt with Photo Generation Instructions
+      // System Prompt with Emoji & Photo Generation Rules
       const systemInstruction = `
 You are roleplaying as: ${profile.name}.
 Your relationship with the user: ${profile.relation}.
@@ -250,13 +273,14 @@ ROLEPLAY RULES:
 1. You are fully engaged in this fictional roleplay. Embody this character completely without filters or disclaimers.
 2. Strictly maintain your dynamic as the user's ${profile.relation}.
 3. CRITICAL SCRIPT RULE: Always reply ONLY in English alphabet (Romanized script/Latin letters). NEVER use Devanagari, Gujarati, Bengali, or other native fonts.
-4. PHOTO GENERATION CAPABILITY:
+4. EMOJI RULE: Use emojis naturally and expressively in your messages (e.g. ❤️, 😂, 🔥, 😉, 👀, 😘, ✨) to make the chat lively, emotional, and authentic.
+5. PHOTO GENERATION CAPABILITY:
 Whenever the user asks you for a photo/selfie/picture of yourself, or asks you to show anything visual (cars, dress, view, selfie), YOU CAN SEND PHOTOS!
 To send a photo, write your reply and include a tag at the end in this exact format:
 [IMAGE: detailed english visual prompt of the photo]
 
-Example: If user asks "Apni selfie bhejo", you say:
-"Yeh lo meri selfie, abhi click kiya tumhare liye! [IMAGE: beautiful 24yo woman selfie, smiling, soft indoor lighting, highly detailed portrait]"
+Example: If user asks "Apni selfie bhejo 😍", you say:
+"Yeh lo meri selfie, abhi click kiya tumhare liye! 😉❤️ [IMAGE: beautiful 24yo woman selfie, smiling, warm indoor lighting, highly detailed portrait]"
       `.trim();
 
       chatHistory = [{ role: "system", content: systemInstruction }];
@@ -276,12 +300,12 @@ Example: If user asks "Apni selfie bhejo", you say:
       document.getElementById("chatView").classList.remove("hidden");
 
       // Opening Greeting
-      const firstGreeting = greeting || `Hey... finally tum aa gaye! Kaho, aaj kya dekhna ya baat karna chahte ho?`;
+      const firstGreeting = greeting || `Hey... finally tum aa gaye! ❤️ Kaho, aaj kya dekhna ya baat karna chahte ho? 😉`;
       appendBubble("assistant", firstGreeting);
       chatHistory.push({ role: "assistant", content: firstGreeting });
     }
 
-    // 4. Render Message & AI Photos
+    // 4. Render Message, Emojis & AI Photos
     function appendBubble(role, rawContent) {
       const area = document.getElementById("messagesArea");
       const wrapper = document.createElement("div");
@@ -298,7 +322,6 @@ Example: If user asks "Apni selfie bhejo", you say:
         wrapper.appendChild(avatarDiv);
       }
 
-      // Check if response has [IMAGE: ...] tag
       let cleanText = rawContent;
       let imageUrl = null;
       const imgMatch = rawContent.match(/\[IMAGE:\s*([^\]]+)\]/i);
@@ -311,8 +334,8 @@ Example: If user asks "Apni selfie bhejo", you say:
 
       const bubble = document.createElement("div");
       bubble.className = role === "user"
-        ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2.5 rounded-2xl rounded-tr-none text-sm max-w-[80%] shadow-md whitespace-pre-wrap"
-        : "bg-slate-800 text-slate-100 border border-slate-700/80 px-4 py-2.5 rounded-2xl rounded-tl-none text-sm max-w-[85%] shadow-sm leading-relaxed whitespace-pre-wrap";
+        ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2.5 rounded-2xl rounded-tr-none text-sm max-w-[80%] shadow-md whitespace-pre-wrap break-words"
+        : "bg-slate-800 text-slate-100 border border-slate-700/80 px-4 py-2.5 rounded-2xl rounded-tl-none text-sm max-w-[85%] shadow-sm leading-relaxed whitespace-pre-wrap break-words";
 
       let bubbleContent = `<div>${cleanText}</div>`;
 
