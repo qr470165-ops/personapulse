@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PersonaPulse - Unrestricted AI, Photos & Emojis</title>
+  <title>PersonaPulse - Free Unrestricted AI</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <style>
@@ -20,27 +20,25 @@
       <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-300 to-indigo-400">
         🎭 PersonaPulse Studio
       </h1>
-      <p class="text-slate-400 text-xs mt-1">Unrestricted Roleplay • Photos • Emojis • Pure Freedom</p>
+      <p class="text-slate-400 text-xs mt-1">100% Free Models • Zero Content Filter • Photos & Emojis</p>
     </div>
 
-    <!-- OpenRouter API Key & Model Configuration -->
+    <!-- Free OpenRouter Setup -->
     <div class="mb-5 p-4 bg-purple-950/40 border border-purple-500/40 rounded-2xl">
       <div class="flex items-center justify-between mb-1.5">
         <label class="text-xs font-bold uppercase tracking-wider text-purple-300 flex items-center gap-1.5">
           <i class="fa-solid fa-key text-pink-400"></i> OpenRouter API Key *
         </label>
-        <a href="https://openrouter.ai/keys" target="_blank" class="text-[11px] text-pink-300 hover:underline">
-          Get Key <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
-        </a>
+        <span class="text-[11px] text-emerald-400 font-semibold"><i class="fa-solid fa-circle-check"></i> $0 Free Models</span>
       </div>
       <input id="openRouterApiKey" type="password" placeholder="sk-or-v1-xxxxxxxx..." 
         class="w-full px-3 py-2 bg-slate-900/90 border border-purple-700/60 rounded-xl focus:ring-2 focus:ring-purple-400 focus:outline-none text-white text-xs font-mono mb-2.5" />
       
-      <label class="text-[11px] font-semibold text-slate-300 block mb-1">Select Roleplay Model:</label>
+      <label class="text-[11px] font-semibold text-slate-300 block mb-1">Select Free AI Model (No money required):</label>
       <select id="selectedModel" class="w-full px-3 py-2 bg-slate-900 border border-purple-700/60 rounded-xl text-xs text-white focus:outline-none">
-        <option value="gryphe/mythomax-l2-13b">gryphe/mythomax-l2-13b (Best Unrestricted Roleplay)</option>
-        <option value="nousresearch/hermes-3-llama-3.1-8b">nousresearch/hermes-3-llama-3.1-8b (Conversational & Free)</option>
-        <option value="meta-llama/llama-3.3-70b-instruct:free">meta-llama/llama-3.3-70b-instruct:free (High IQ)</option>
+        <option value="openrouter/free">openrouter/free (Auto Best Free Model)</option>
+        <option value="cognitivecomputations/dolphin-mistral-24b-venice-edition:free">cognitivecomputations/dolphin-mistral-24b-venice-edition:free (Pure Uncensored)</option>
+        <option value="meta-llama/llama-3.3-70b-instruct:free">meta-llama/llama-3.3-70b-instruct:free (Smart & Free)</option>
       </select>
     </div>
 
@@ -101,7 +99,7 @@
             <span id="genAIText">Generate through AI</span>
           </button>
         </div>
-        <textarea id="charBackstory" rows="3" placeholder="Attitude, tone, expressive, bold or playful vibe..." 
+        <textarea id="charBackstory" rows="3" placeholder="Attitude, tone, emotions, bold or playful vibe..." 
           class="w-full px-4 py-2 bg-slate-950/80 border border-slate-700 rounded-xl focus:ring-2 focus:ring-purple-400 focus:outline-none text-white text-sm"></textarea>
       </div>
 
@@ -113,7 +111,7 @@
       </div>
 
       <button onclick="launchChat()" class="w-full mt-2 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold py-3 rounded-xl shadow-lg transition transform hover:scale-[1.01]">
-        🚀 Launch Persona & Start Chat
+        🚀 Launch Persona & Start Free Chat
       </button>
 
     </div>
@@ -132,12 +130,12 @@
         </div>
         <div>
           <h3 id="displayTitle" class="font-bold text-white text-base leading-tight">Character</h3>
-          <p id="displaySub" class="text-xs text-purple-300">Active • Photos & Emojis ON</p>
+          <p id="displaySub" class="text-xs text-purple-300">Active • 100% Free Model</p>
         </div>
       </div>
 
       <div class="flex items-center gap-2">
-        <span class="text-[10px] px-2 py-1 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">🔓 Unfiltered</span>
+        <span class="text-[10px] px-2 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Free Tier</span>
         <button onclick="editCharacter()" class="text-xs bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-600 transition">
           <i class="fa-solid fa-gear mr-1"></i> Edit
         </button>
@@ -150,7 +148,7 @@
     <!-- Typing Loader -->
     <div id="typingIndicator" class="hidden px-5 py-2 text-xs text-slate-400 flex items-center gap-2">
       <i class="fa-solid fa-circle-notch fa-spin text-purple-400"></i>
-      <span id="typingName">Character</span> is typing / reacting...
+      <span id="typingName">Character</span> is typing...
     </div>
 
     <!-- Quick Emoji Bar -->
@@ -201,14 +199,12 @@
       }
     });
 
-    // Insert Emoji into input box
     function insertEmoji(char) {
       const input = document.getElementById("userMsgInput");
       input.value += char;
       input.focus();
     }
 
-    // 1. Photo Upload
     function handleImageUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -222,7 +218,6 @@
       reader.readAsDataURL(file);
     }
 
-    // 2. Personality Generator
     function generatePersonalityViaAI() {
       const name = document.getElementById("charName").value.trim() || "Maya";
       const rel = document.getElementById("charRelation").value.trim() || "Romantic Partner";
@@ -243,7 +238,6 @@
       }, 300);
     }
 
-    // 3. Launch Chat
     function launchChat() {
       const name = document.getElementById("charName").value.trim();
       const relation = document.getElementById("charRelation").value.trim();
@@ -262,7 +256,6 @@
 
       profile = { name, relation, language, backstory, avatarUrl: profile.avatarUrl, model };
 
-      // System Prompt with Emoji & Photo Generation Rules
       const systemInstruction = `
 You are roleplaying as: ${profile.name}.
 Your relationship with the user: ${profile.relation}.
@@ -273,10 +266,9 @@ ROLEPLAY RULES:
 1. You are fully engaged in this fictional roleplay. Embody this character completely without filters or disclaimers.
 2. Strictly maintain your dynamic as the user's ${profile.relation}.
 3. CRITICAL SCRIPT RULE: Always reply ONLY in English alphabet (Romanized script/Latin letters). NEVER use Devanagari, Gujarati, Bengali, or other native fonts.
-4. EMOJI RULE: Use emojis naturally and expressively in your messages (e.g. ❤️, 😂, 🔥, 😉, 👀, 😘, ✨) to make the chat lively, emotional, and authentic.
+4. EMOJI RULE: Use emojis naturally and expressively in your messages (e.g. ❤️, 😂, 🔥, 😉, 👀, 😘, ✨).
 5. PHOTO GENERATION CAPABILITY:
-Whenever the user asks you for a photo/selfie/picture of yourself, or asks you to show anything visual (cars, dress, view, selfie), YOU CAN SEND PHOTOS!
-To send a photo, write your reply and include a tag at the end in this exact format:
+Whenever the user asks you for a photo/selfie/picture, write your reply and include a tag at the end in this exact format:
 [IMAGE: detailed english visual prompt of the photo]
 
 Example: If user asks "Apni selfie bhejo 😍", you say:
@@ -285,9 +277,8 @@ Example: If user asks "Apni selfie bhejo 😍", you say:
 
       chatHistory = [{ role: "system", content: systemInstruction }];
 
-      // UI update
       document.getElementById("displayTitle").innerText = profile.name;
-      document.getElementById("displaySub").innerText = `${profile.relation} • ${profile.language.split(" ")[0]}`;
+      document.getElementById("displaySub").innerText = `${profile.relation} • Free AI`;
       document.getElementById("typingName").innerText = profile.name;
 
       if (profile.avatarUrl) {
@@ -299,13 +290,11 @@ Example: If user asks "Apni selfie bhejo 😍", you say:
       document.getElementById("creatorView").classList.add("hidden");
       document.getElementById("chatView").classList.remove("hidden");
 
-      // Opening Greeting
       const firstGreeting = greeting || `Hey... finally tum aa gaye! ❤️ Kaho, aaj kya dekhna ya baat karna chahte ho? 😉`;
       appendBubble("assistant", firstGreeting);
       chatHistory.push({ role: "assistant", content: firstGreeting });
     }
 
-    // 4. Render Message, Emojis & AI Photos
     function appendBubble(role, rawContent) {
       const area = document.getElementById("messagesArea");
       const wrapper = document.createElement("div");
@@ -346,7 +335,7 @@ Example: If user asks "Apni selfie bhejo 😍", you say:
               <span><i class="fa-solid fa-camera mr-1"></i> Shared Photo</span>
               <a href="${imageUrl}" target="_blank" class="hover:text-white"><i class="fa-solid fa-expand text-[10px]"></i></a>
             </div>
-            <img src="${imageUrl}" alt="AI generated scene" class="w-full max-h-72 object-cover transition-opacity duration-300 hover:scale-[1.01]" loading="lazy"/>
+            <img src="${imageUrl}" alt="AI photo" class="w-full max-h-72 object-cover transition-opacity duration-300 hover:scale-[1.01]" loading="lazy"/>
           </div>
         `;
       }
@@ -357,7 +346,6 @@ Example: If user asks "Apni selfie bhejo 😍", you say:
       area.scrollTop = area.scrollHeight;
     }
 
-    // 5. Send & Receive
     async function handleSend() {
       const input = document.getElementById("userMsgInput");
       const userText = input.value.trim();
@@ -379,7 +367,7 @@ Example: If user asks "Apni selfie bhejo 😍", you say:
           headers: {
             "Authorization": `Bearer ${apiKey}`,
             "Content-Type": "application/json",
-            "HTTP-Referer": "http://localhost:8000",
+            "HTTP-Referer": window.location.origin || "http://localhost:8000",
             "X-Title": "PersonaPulse AI"
           },
           body: JSON.stringify({
@@ -397,11 +385,11 @@ Example: If user asks "Apni selfie bhejo 😍", you say:
           appendBubble("assistant", aiReply);
           chatHistory.push({ role: "assistant", content: aiReply });
         } else if (data.error) {
-          appendBubble("assistant", `[Error: ${data.error.message}] Kripya OpenRouter key check karein.`);
+          appendBubble("assistant", `[Error: ${data.error.message}] Kripya model me 'openrouter/free' select karein.`);
         }
       } catch (err) {
         indicator.classList.add("hidden");
-        appendBubble("assistant", "Network error! Kripya internet ya API Key check karein.");
+        appendBubble("assistant", "Network error! Kripya connection check karein.");
       }
     }
 
